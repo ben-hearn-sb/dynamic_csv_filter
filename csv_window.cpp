@@ -17,7 +17,9 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
     //set up GUI
     resize(500, 500);
     //std::string fileString = "C:/Users/Ben/google_drive/Avalanche/qt_task/data.csv";
-    std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/Sacramentorealestatetransactions.csv";
+    //std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/Sacramentorealestatetransactions.csv";
+    //std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/SacramentocrimeJanuary2006.csv";
+    std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/SalesJan2009.csv";
     std::vector<std::vector<std::string>> csvData;
     std::vector<std::string> headers;
     std::vector<std::string> imageFilters;

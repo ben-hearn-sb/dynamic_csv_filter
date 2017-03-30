@@ -35,6 +35,7 @@ bool CustomProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &source
 
 void CustomProxyModel::setFilter(const QString& regExp)
 {
+    // Tells the model filters
     QObject* senderObj = sender();
     QString senderName = senderObj->objectName();
     //qDebug() << senderName;
@@ -42,7 +43,7 @@ void CustomProxyModel::setFilter(const QString& regExp)
     {
         if(filters[i].filterEdit->objectName()  == senderName)
         {
-            qDebug() << "Found a match: " << senderName;
+            //qDebug() << "Found a match: " << senderName;
             filters[i].myRegExp.setPattern(regExp);
             invalidateFilter();
             break;
@@ -52,6 +53,7 @@ void CustomProxyModel::setFilter(const QString& regExp)
 
 void CustomProxyModel::setupFilters(QStringList& qHeaders)
 {
+    // Sets up our filter structs dynamically based on the headers
     QStringList::const_iterator item;
     for (item = qHeaders.begin(); item != qHeaders.end(); ++item)
     {

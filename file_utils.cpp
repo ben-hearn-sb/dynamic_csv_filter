@@ -4,9 +4,9 @@
 #include <windows.h>
 namespace fs = boost::filesystem;
 
-// Constructs a multi-vector out of a csv file
 void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::vector<std::string>>& lineData, std::vector<std::string>& headers)
 {
+    // Constructs a multi-vector out of a csv file
     std::ifstream file(filePath); // declare file stream
     std::string line;
     std::string splitLine;
@@ -57,6 +57,7 @@ void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::v
 // List files in a single layered directory
 std::vector<std::string> file_utils::listFilesInDir(std::string & inputPath)
 {
+    // Iterates a directory and lists all the files. Not currelty recursive
     std::vector<std::string> file_paths = std::vector<std::string>();
 
     if (!inputPath.empty())
@@ -75,12 +76,14 @@ std::vector<std::string> file_utils::listFilesInDir(std::string & inputPath)
 
 std::string file_utils::getFileName(const std::string& inputPath)
 {
+    // Gets the name of a file
     fs::path p(inputPath);
     return p.stem().string();
 }
 
 std::string file_utils::getFileExt(const std::string & inputPath)
 {
+    // gets the extension of a file
     fs::path p(inputPath);
     return p.filename().extension().string();
 }
