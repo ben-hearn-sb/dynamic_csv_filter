@@ -40,15 +40,25 @@ void CustomProxyModel::setFilter(const QString& regExp)
     //qDebug() << senderName;
     for(int i = 0; i < filters.size(); ++i)
     {
-        //QLineEdit* filter = filters[i].filterEdit;
-        //QString filterName = filter->objectName();
-        //if(filterName == senderName)
         if(filters[i].filterEdit->objectName()  == senderName)
         {
-            //qDebug() << "Found a match: " << senderName;
+            qDebug() << "Found a match: " << senderName;
             filters[i].myRegExp.setPattern(regExp);
             invalidateFilter();
             break;
         }
+    }
+}
+
+void CustomProxyModel::setupFilters(QStringList& qHeaders)
+{
+    QStringList::const_iterator item;
+    for (item = qHeaders.begin(); item != qHeaders.end(); ++item)
+    {
+        QLineEdit* edit = new QLineEdit();
+        edit->setObjectName(*item);
+        edit->setPlaceholderText(*item);
+        QRegExp regExp;
+        filters.push_back({edit, regExp});
     }
 }

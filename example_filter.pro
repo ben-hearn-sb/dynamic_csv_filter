@@ -12,7 +12,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     custom_proxy_filter.cpp \
-    csv_window.cpp
+    csv_window.cpp \
+    file_utils.cpp \
+    general_utils.cpp \
+    qt_utils.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -27,4 +30,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     custom_proxy_filter.h \
-    csv_window.h
+    csv_window.h \
+    file_utils.h \
+    general_utils.h \
+    qt_utils.h
+
+INCLUDEPATH += C:/boost_1_63_0/
+LIBS += "-LC:/boost_1_63_0/stage/lib/"

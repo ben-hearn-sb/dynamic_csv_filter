@@ -1,50 +1,44 @@
-#include<QSortFilterProxyModel>
-#include<QtGui/QStandardItemModel>
-#include<QtWidgets/QWidget>
-#include<QtWidgets/QVBoxLayout>
-#include<QtWidgets/QLineEdit>
-#include<QtWidgets/QTableView>
-#include<QtCore/QList>
+#include<QStandardItemModel>
+#include<QWidget>
+#include<QVBoxLayout>
+#include<QLineEdit>
+#include<QTableView>
+#include<QList>
 #include<QMainWindow>
+#include<QStringList>
 
 #include "csv_window.h"
 #include "custom_proxy_filter.h"
+#include "file_utils.h"
+#include "qt_utils.h"
 
 Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
 {
     //set up GUI
     resize(500, 500);
+    //std::string fileString = "C:/Users/Ben/google_drive/Avalanche/qt_task/data.csv";
+    std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/Sacramentorealestatetransactions.csv";
+    std::vector<std::vector<std::string>> csvData;
+    std::vector<std::string> headers;
+    std::vector<std::string> imageFilters;
+    file_utils::constructCsvFileVector(fileString, csvData, headers);
+
     QWidget* w = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
     QHBoxLayout* hLayout = new QHBoxLayout();
-    QLineEdit* lineEditName = new QLineEdit();
-    QLineEdit* lineEditYear= new QLineEdit();
-    QLineEdit* lineEditNumber= new QLineEdit();
-    lineEditName->setObjectName("name_edit");
-    lineEditYear->setObjectName("year_edit");
-    lineEditNumber->setObjectName("number_edit");
 
-    lineEditName->setPlaceholderText("name filter");
-    lineEditYear->setPlaceholderText("year filter");
-    lineEditNumber->setPlaceholderText("Number Filter");
-    QRegExp nameRegExp;
-    QRegExp yearRegExp;
-    QRegExp numRegExp;
-
-    QTableView* tableView = new QTableView();
+    tableView = new QTableView();
 
     //set up models
-    QStandardItemModel* sourceModel = new QStandardItemModel();
-    CustomProxyModel* filterModel   = new CustomProxyModel();
+    sourceModel     = new QStandardItemModel();
+    filterModel     = new CustomProxyModel();
     filterModel->setSourceModel(sourceModel);
     tableView->setModel(filterModel);
 
-    layout->addLayout(hLayout);
-    layout->addWidget(tableView);
-
-    filterModel->filters.push_back({lineEditName, nameRegExp});
-    filterModel->filters.push_back({lineEditYear, yearRegExp});
-    filterModel->filters.push_back({lineEditNumber, numRegExp});
+    QStringList qHeaders = qt_utils::convertToQStringList(headers);
+    filterModel->setupFilters(qHeaders);
+    setupCsvTable(csvData, headers);
+    qt_utils::stretchAllColumns(tableView);
 
     for(int i = 0; i < filterModel->filters.size(); ++i)
     {
@@ -54,38 +48,27 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
         filterModel->filters[i].myRegExp.setPatternSyntax(QRegExp::RegExp);
     }
 
-    //fill with dummy data
-    QVector<QString> names{"Danny", "Christine", "Lars", "Roberto", "Maria"};
-    for(int i=0; i<100; i++)
-    {
-        QList<QStandardItem*> row;
-        row.append(new QStandardItem(names[i%names.size()]));
-        row.append(new QStandardItem(QString::number((i%9)+1980)));
-        row.append(new QStandardItem(QString::number(i)));
-        sourceModel->appendRow(row);
-    }
+    layout->addLayout(hLayout);
+    layout->addWidget(tableView);
     w->setLayout(layout);
     setCentralWidget(w);
 }
 
-/*
 void Csv_Window::setupCsvTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)
 {
+    // We setup our tablemodel here using the input csv multi vector
     std::vector<std::vector<std::string>>::const_iterator col;
     std::vector<std::string>::const_iterator row;
-    int columnCount = 0;
-    int rowCount = 0;
     for (col = inputData.begin(); col != inputData.end(); ++col)
     {
-        rowCount=0;
+        QList<QStandardItem*> column;
         for (row = col->begin(); row != col->end(); ++row)
         {
             QString value = QString::fromStdString(*row).toLatin1().data();
-            QStandardItem *item = new QStandardItem(value);
-            csvModel->setItem(rowCount, columnCount, item);
-            ++rowCount;
+            column.append(new QStandardItem(value));
         }
-        ++columnCount;
+        sourceModel->appendColumn(column);
     }
+    QStringList qHeaders = qt_utils::convertToQStringList(headers);
+    qt_utils::setTableHeaders(sourceModel, qHeaders);
 }
-*/
