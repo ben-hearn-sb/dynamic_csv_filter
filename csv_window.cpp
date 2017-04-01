@@ -6,6 +6,11 @@
 #include<QList>
 #include<QMainWindow>
 #include<QStringList>
+#include<QAction>
+#include<QMenu>
+#include<QMenuBar>
+#include<QObject>
+#include<QDebug>
 
 #include "csv_window.h"
 #include "custom_proxy_filter.h"
@@ -42,6 +47,7 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
     setupCsvTable(csvData, headers);
     qt_utils::stretchAllColumns(tableView);
 
+    // Setup line edit filter signals
     for(int i = 0; i < filterModel->filters.size(); ++i)
     {
         hLayout->addWidget(filterModel->filters[i].filterEdit);
@@ -54,6 +60,33 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
     layout->addWidget(tableView);
     w->setLayout(layout);
     setCentralWidget(w);
+    setupActions();
+    setupMenus();
+}
+
+void Csv_Window::setupActions()
+{
+    actOpenFile = new QAction(QObject::tr("Open File"), this);
+    //actOpenFile->setShortcuts(Qt::CTRL + Qt::Key_O);
+    connect(actOpenFile, &QAction::triggered, this, &Csv_Window::handleOpenCsvFile);
+}
+
+void Csv_Window::setupMenus()
+{
+    // Here we setup out menus
+    fileMenu = new QMenu(QObject::tr("File"));
+    fileMenu->addAction(actOpenFile);
+    menuBar()->addMenu(fileMenu);
+}
+
+void Csv_Window::handleOpenCsvFile()
+{
+    std::string filePath = file_utils::openFile();
+    if(filePath != "")
+    {
+        qDebug() << "filepath is: " << QString::fromStdString(filePath).toLatin1().data();
+        //qDebug() << senderName;
+    }
 }
 
 void Csv_Window::setupCsvTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)

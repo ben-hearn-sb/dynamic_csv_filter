@@ -14,6 +14,7 @@ namespace file_utils
     std::vector<std::string> listFilesInDir(std::string& inputPath);
     std::string getFileName(const std::string& inputPath);
     std::string getFileExt(const std::string& inputPath);
+    std::string openFile();
 }
 
 #endif // FILE_UTILS_H

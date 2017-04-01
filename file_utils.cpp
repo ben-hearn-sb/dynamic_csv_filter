@@ -1,6 +1,15 @@
 #include "file_utils.h"
-#include <sstream>
+#include "qt_utils.h"
+
 #include <QtCore/QTextStream>
+#include <QObject>
+#include <QFile>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QString>
+#include <QIODevice>
+
+#include <sstream>
 #include <windows.h>
 namespace fs = boost::filesystem;
 
@@ -86,4 +95,28 @@ std::string file_utils::getFileExt(const std::string & inputPath)
     // gets the extension of a file
     fs::path p(inputPath);
     return p.filename().extension().string();
+}
+
+std::string file_utils::openFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(NULL, QObject::tr("Open CSV file"),
+                                                    "C:/Users/Ben/Desktop/sample_csv_data",
+                                                    QObject::tr("text files (*.csv *.txt)"));
+    if (fileName.isEmpty())
+    {
+        return "";
+    }
+    else
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly))
+        {
+            QMessageBox::information(NULL, QObject::tr("Unable to open file"), file.errorString());
+            //const char* errorMessage = "Error biatch";
+            //qt_utils::createInfoBox(QString::fromStdString("Unable to open file"), file.errorString());
+            //qt_utils::createInfoBox(errorMessage, file.errorString());
+            return "";
+        }
+        return fileName.toStdString();
+    }
 }

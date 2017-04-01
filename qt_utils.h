@@ -6,6 +6,7 @@ class QTableView;
 class QTableWidget;
 class QStringList;
 class QStandardItemModel;
+class QString;
 
 #include <vector>
 
@@ -17,6 +18,7 @@ namespace qt_utils
     void stretchAllColumns(QTableView* inputTable);
     void resizeRowsToContents(QTableWidget* inputTable);
     void setTableHeaders(QStandardItemModel* inputModel, QStringList& headers);
+    void createInfoBox(const QString& message, const QString& errorString);
 }
 
 #endif

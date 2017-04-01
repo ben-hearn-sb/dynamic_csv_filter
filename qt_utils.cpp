@@ -8,6 +8,8 @@
 #include <QHeaderView>
 #include <QStringList>
 #include <QStandardItemModel>
+#include <QMessageBox>
+#include <QString>
 
 QStringList qt_utils::convertToQStringList(std::vector<char*> inputVec)
 {
@@ -59,4 +61,9 @@ void qt_utils::resizeRowsToContents(QTableWidget* inputTable)
 void qt_utils::setTableHeaders(QStandardItemModel* inputModel, QStringList& headers)
 {
     inputModel->setHorizontalHeaderLabels(headers);
+}
+
+void createInfoBox(const QString& message, const QString& errorString)
+{
+    QMessageBox::information(NULL, message, errorString);
 }
