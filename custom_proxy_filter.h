@@ -5,13 +5,14 @@
 
 class QRegExp;
 class QLineEdit;
+class QStringList;
 
 class CustomProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     public:
         explicit CustomProxyModel(QObject* parent=0);
-        std::vector<QRegExp> regVec;
+        void setupFilters(QStringList& qHeaders);
         // Struct that will contain our line edit and regular expression
         struct filterInfo
         {
@@ -19,7 +20,6 @@ class CustomProxyModel : public QSortFilterProxyModel
             QRegExp myRegExp;
         };
         std::vector<filterInfo> filters;
-        // setupFilterPatterns();
 
     public slots:
         void setFilter(const QString& regExp);

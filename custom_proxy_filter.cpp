@@ -35,14 +35,12 @@ bool CustomProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &source
 
 void CustomProxyModel::setFilter(const QString& regExp)
 {
+    // Tells the model filters
     QObject* senderObj = sender();
     QString senderName = senderObj->objectName();
     //qDebug() << senderName;
     for(int i = 0; i < filters.size(); ++i)
     {
-        //QLineEdit* filter = filters[i].filterEdit;
-        //QString filterName = filter->objectName();
-        //if(filterName == senderName)
         if(filters[i].filterEdit->objectName()  == senderName)
         {
             //qDebug() << "Found a match: " << senderName;
@@ -50,5 +48,19 @@ void CustomProxyModel::setFilter(const QString& regExp)
             invalidateFilter();
             break;
         }
+    }
+}
+
+void CustomProxyModel::setupFilters(QStringList& qHeaders)
+{
+    // Sets up our filter structs dynamically based on the headers
+    QStringList::const_iterator item;
+    for (item = qHeaders.begin(); item != qHeaders.end(); ++item)
+    {
+        QLineEdit* edit = new QLineEdit();
+        edit->setObjectName(*item);
+        edit->setPlaceholderText(*item);
+        QRegExp regExp;
+        filters.push_back({edit, regExp});
     }
 }
