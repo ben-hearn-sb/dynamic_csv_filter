@@ -21,42 +21,19 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
 {
     //set up GUI
     resize(500, 500);
-    //std::string fileString = "C:/Users/Ben/google_drive/Avalanche/qt_task/data.csv";
-    //std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/Sacramentorealestatetransactions.csv";
-    //std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/SacramentocrimeJanuary2006.csv";
-    std::string fileString = "C:/Users/Ben/Desktop/sample_csv_data/SalesJan2009.csv";
-    std::vector<std::vector<std::string>> csvData;
-    std::vector<std::string> headers;
-    std::vector<std::string> imageFilters;
-    file_utils::constructCsvFileVector(fileString, csvData, headers);
 
     QWidget* w = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
-    QHBoxLayout* hLayout = new QHBoxLayout();
-
-    tableView = new QTableView();
+    filterLayout = new QHBoxLayout();
 
     //set up models
+    tableView = new QTableView();
     sourceModel     = new QStandardItemModel();
     filterModel     = new CustomProxyModel();
     filterModel->setSourceModel(sourceModel);
     tableView->setModel(filterModel);
 
-    QStringList qHeaders = qt_utils::convertToQStringList(headers);
-    filterModel->setupFilters(qHeaders);
-    setupCsvTable(csvData, headers);
-    qt_utils::stretchAllColumns(tableView);
-
-    // Setup line edit filter signals
-    for(int i = 0; i < filterModel->filters.size(); ++i)
-    {
-        hLayout->addWidget(filterModel->filters[i].filterEdit);
-        QObject::connect(filterModel->filters[i].filterEdit, SIGNAL(textChanged(const QString &)), filterModel, SLOT(setFilter(const QString &)));
-        filterModel->filters[i].myRegExp.setCaseSensitivity(Qt::CaseInsensitive);
-        filterModel->filters[i].myRegExp.setPatternSyntax(QRegExp::RegExp);
-    }
-
-    layout->addLayout(hLayout);
+    layout->addLayout(filterLayout);
     layout->addWidget(tableView);
     w->setLayout(layout);
     setCentralWidget(w);
@@ -84,12 +61,11 @@ void Csv_Window::handleOpenCsvFile()
     std::string filePath = file_utils::openFile();
     if(filePath != "")
     {
-        qDebug() << "filepath is: " << QString::fromStdString(filePath).toLatin1().data();
-        //qDebug() << senderName;
+        setupModel(filePath);
     }
 }
 
-void Csv_Window::setupCsvTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)
+void Csv_Window::setupMultiArrayTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)
 {
     // We setup our tablemodel here using the input csv multi vector
     std::vector<std::vector<std::string>>::const_iterator col;
@@ -102,8 +78,54 @@ void Csv_Window::setupCsvTable(std::vector<std::vector<std::string>>& inputData,
             QString value = QString::fromStdString(*row).toLatin1().data();
             column.append(new QStandardItem(value));
         }
+        // Here we append our columns to our source model
         sourceModel->appendColumn(column);
     }
     QStringList qHeaders = qt_utils::convertToQStringList(headers);
     qt_utils::setTableHeaders(sourceModel, qHeaders);
+}
+
+void Csv_Window::setupModel(std::string& filePath)
+{
+    // Clear our vectors and model of old data first
+    filterModel->filters.clear();
+    multiArrayData.clear();
+    headers.clear();
+    sourceModel->clear();
+    clearFilterLabels();
+    //filterModel->clear();
+
+    // Setup our multiarry & headers
+    file_utils::constructCsvFileVector(filePath, multiArrayData, headers);
+    QStringList qHeaders = qt_utils::convertToQStringList(headers);
+    filterModel->setupFilters(qHeaders);
+    setupMultiArrayTable(multiArrayData, headers);
+    qt_utils::stretchAllColumns(tableView);
+    setupFilterSignals();
+}
+
+void Csv_Window::setupFilterSignals()
+{
+    // Setup line edit filter signals
+    for(int i = 0; i < filterModel->filters.size(); ++i)
+    {
+        filterLayout->addWidget(filterModel->filters[i].filterEdit);
+        QObject::connect(filterModel->filters[i].filterEdit, SIGNAL(textChanged(const QString &)), filterModel, SLOT(setFilter(const QString &)));
+        filterModel->filters[i].myRegExp.setCaseSensitivity(Qt::CaseInsensitive);
+        filterModel->filters[i].myRegExp.setPatternSyntax(QRegExp::RegExp);
+    }
+}
+
+void Csv_Window::clearFilterLabels()
+{
+    // Iterates the filter layout and destroys the object handler and object
+    for (int i = 0; i < filterLayout->count(); ++i)
+    {
+        QLayoutItem *child;
+        while ((child = filterLayout->takeAt(i)) != 0)
+        {
+            delete child->widget();
+            delete child;
+        }
+    }
 }
