@@ -18,6 +18,10 @@
 #include "file_utils.h"
 #include "qt_utils.h"
 
+// TODO:
+// Save filtered information in new file
+// Destroy QRegExp as well as labels
+
 Multi_Array_Table::Multi_Array_Table(QWidget *parent): QMainWindow(parent)
 {
     //set up GUI
@@ -30,6 +34,7 @@ Multi_Array_Table::Multi_Array_Table(QWidget *parent): QMainWindow(parent)
 
     //set up models
     tableView = new QTableView();
+    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers); // Read only cells
     sourceModel     = new QStandardItemModel();
     filterModel     = new CustomProxyModel();
     filterModel->setSourceModel(sourceModel);
