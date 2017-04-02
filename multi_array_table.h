@@ -11,19 +11,21 @@ class QTableView;
 class QAction;
 class QMenuBar;
 class QHBoxLayout;
+class QPushButton;
 
-class Csv_Window : public QMainWindow
+class Multi_Array_Table : public QMainWindow
 {
     Q_OBJECT
     public:
-        explicit Csv_Window(QWidget *parent = 0);
+        explicit Multi_Array_Table(QWidget *parent = 0);
         void setupMultiArrayTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers);
         void setupMenus();
         void setupActions();
         void handleOpenCsvFile();
         void setupModel(std::string& filePath);
         void setupFilterSignals();
-        void clearFilterLabels();
+        void destroyFilterLabels();
+        void saveFilteredSnapShot();
     private:
         QStandardItemModel* sourceModel;
         CustomProxyModel* filterModel;
@@ -31,8 +33,11 @@ class Csv_Window : public QMainWindow
         QAction* actOpenFile;
         QMenu* fileMenu;
         QHBoxLayout* filterLayout;
+        QPushButton* btnResetFilters;
         std::vector<std::vector<std::string>> multiArrayData;
         std::vector<std::string> headers;
+    public slots:
+        void clearFilters();
 };
 
 #endif // CSV_WINDOW_H

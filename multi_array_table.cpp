@@ -11,19 +11,21 @@
 #include<QMenuBar>
 #include<QObject>
 #include<QDebug>
+#include<QPushButton>
 
-#include "csv_window.h"
+#include "multi_array_table.h"
 #include "custom_proxy_filter.h"
 #include "file_utils.h"
 #include "qt_utils.h"
 
-Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
+Multi_Array_Table::Multi_Array_Table(QWidget *parent): QMainWindow(parent)
 {
     //set up GUI
     resize(500, 500);
 
     QWidget* w = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
+    QVBoxLayout* filterSectionLayout = new QVBoxLayout();
     filterLayout = new QHBoxLayout();
 
     //set up models
@@ -33,7 +35,13 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
     filterModel->setSourceModel(sourceModel);
     tableView->setModel(filterModel);
 
-    layout->addLayout(filterLayout);
+    btnResetFilters = new QPushButton("Clear Filters");
+    //btnResetFilters->setShortcut(Qt::CTRL + Qt::Key_C);
+    connect(btnResetFilters, SIGNAL(clicked()), this, SLOT(clearFilters()));
+
+    filterSectionLayout->addWidget(btnResetFilters);
+    filterSectionLayout->addLayout(filterLayout);
+    layout->addLayout(filterSectionLayout);
     layout->addWidget(tableView);
     w->setLayout(layout);
     setCentralWidget(w);
@@ -41,14 +49,14 @@ Csv_Window::Csv_Window(QWidget *parent): QMainWindow(parent)
     setupMenus();
 }
 
-void Csv_Window::setupActions()
+void Multi_Array_Table::setupActions()
 {
     actOpenFile = new QAction(QObject::tr("Open File"), this);
-    //actOpenFile->setShortcuts(Qt::CTRL + Qt::Key_O);
-    connect(actOpenFile, &QAction::triggered, this, &Csv_Window::handleOpenCsvFile);
+    actOpenFile->setShortcut(Qt::CTRL + Qt::Key_O);
+    connect(actOpenFile, &QAction::triggered, this, &Multi_Array_Table::handleOpenCsvFile);
 }
 
-void Csv_Window::setupMenus()
+void Multi_Array_Table::setupMenus()
 {
     // Here we setup out menus
     fileMenu = new QMenu(QObject::tr("File"));
@@ -56,7 +64,7 @@ void Csv_Window::setupMenus()
     menuBar()->addMenu(fileMenu);
 }
 
-void Csv_Window::handleOpenCsvFile()
+void Multi_Array_Table::handleOpenCsvFile()
 {
     std::string filePath = file_utils::openFile();
     if(filePath != "")
@@ -65,7 +73,7 @@ void Csv_Window::handleOpenCsvFile()
     }
 }
 
-void Csv_Window::setupMultiArrayTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)
+void Multi_Array_Table::setupMultiArrayTable(std::vector<std::vector<std::string>>& inputData, std::vector<std::string>& headers)
 {
     // We setup our tablemodel here using the input csv multi vector
     std::vector<std::vector<std::string>>::const_iterator col;
@@ -85,14 +93,14 @@ void Csv_Window::setupMultiArrayTable(std::vector<std::vector<std::string>>& inp
     qt_utils::setTableHeaders(sourceModel, qHeaders);
 }
 
-void Csv_Window::setupModel(std::string& filePath)
+void Multi_Array_Table::setupModel(std::string& filePath)
 {
     // Clear our vectors and model of old data first
     filterModel->filters.clear();
     multiArrayData.clear();
     headers.clear();
     sourceModel->clear();
-    clearFilterLabels();
+    destroyFilterLabels();
     //filterModel->clear();
 
     // Setup our multiarry & headers
@@ -104,7 +112,7 @@ void Csv_Window::setupModel(std::string& filePath)
     setupFilterSignals();
 }
 
-void Csv_Window::setupFilterSignals()
+void Multi_Array_Table::setupFilterSignals()
 {
     // Setup line edit filter signals
     for(int i = 0; i < filterModel->filters.size(); ++i)
@@ -116,8 +124,9 @@ void Csv_Window::setupFilterSignals()
     }
 }
 
-void Csv_Window::clearFilterLabels()
+void Multi_Array_Table::destroyFilterLabels()
 {
+    // TODO: Destroy QRegExp as well as labels
     // Iterates the filter layout and destroys the object handler and object
     for (int i = 0; i < filterLayout->count(); ++i)
     {
@@ -128,4 +137,18 @@ void Csv_Window::clearFilterLabels()
             delete child;
         }
     }
+}
+
+void Multi_Array_Table::clearFilters()
+{
+    // Clears the filter labels we have saved
+    for(int i = 0; i < filterModel->filters.size(); ++i)
+    {
+        filterModel->filters[i].filterEdit->clear();
+    }
+}
+
+void Multi_Array_Table::saveFilteredSnapShot()
+{
+    //TODO: Save the filtered table data
 }
