@@ -12,6 +12,7 @@ class QAction;
 class QMenuBar;
 class QHBoxLayout;
 class QPushButton;
+class QString;
 
 class Multi_Array_Table : public QMainWindow
 {
@@ -25,12 +26,13 @@ class Multi_Array_Table : public QMainWindow
         void setupModel(std::string& filePath);
         void setupFilterSignals();
         void destroyFilterLabels();
-        void saveFilteredSnapShot();
+        void saveFilteredData();
     private:
         QStandardItemModel* sourceModel;
         CustomProxyModel* filterModel;
         QTableView* tableView;
         QAction* actOpenFile;
+        QAction* actSaveFiltered;
         QMenu* fileMenu;
         QHBoxLayout* filterLayout;
         QPushButton* btnResetFilters;

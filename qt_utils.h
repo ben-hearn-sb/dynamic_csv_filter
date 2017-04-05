@@ -19,6 +19,9 @@ namespace qt_utils
     void resizeRowsToContents(QTableWidget* inputTable);
     void setTableHeaders(QStandardItemModel* inputModel, QStringList& headers);
     void createInfoBox(const QString& message, const QString& errorString);
+    QString collectTableInfoInStr(QStandardItemModel* inputModel);
+    QString collectTableInfoInStr(QStandardItemModel* inputModel, std::vector<int>& filteredIndexes);
+    QString getTableHeadersInStr(QStandardItemModel* inputModel);
 }
 
 #endif

@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QString>
 #include <QIODevice>
+#include <QDebug>
+#include <QString>
 
 #include <sstream>
 #include <windows.h>
@@ -18,39 +20,32 @@ void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::v
     // Constructs a multi-vector out of a csv file
     std::ifstream file(filePath); // declare file stream
     std::string line;
-    std::string splitLine;
     int numOfColumns = 0;
     int numOfLines= 0;
-    int currentColNum = 0;
-    std::regex rgx("\"([^\"]*)\"");
 
     // Run through each line of the CSV file and split at the newline separator
+    // TODO: Fix this to handle bth \r and \n newline terminators
     while (std::getline(file, line, '\r'))
     {
         numOfColumns = 0;
         ++numOfLines;
-
         const char *mystart = line.c_str();
         bool instring{ false };
-        for (const char* p = mystart; *p; p++)
+        for (const char* p = mystart; *p; ++p) // Iterate through each character
         {
             if (*p == '"') // toggle flag if we're btw double quote
             {
                 instring = !instring;
             }
-            else if (*p == ',' && !instring)
+            // We need to check for an empty string and a comma. The empty string is the last value in our mystart variable
+            else if ((*p == ',' && !instring))
             {
                 ++numOfColumns;
                 if (numOfLines == 1)
                 {
                     // On each field delimiter "," we add a new column indicating a new field
-                    // Only needs doing once
+                    // Only needs doing once hence if line == 1
                     lineData.resize(numOfColumns);
-                }
-
-                if (numOfLines == 1)
-                {
-                    // Only push back first line of fields to headers
                     headers.push_back(std::string(mystart, p - mystart));
                 }
                 else
@@ -59,6 +54,17 @@ void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::v
                 }
                 mystart = p + 1;
             }
+        }
+        // End of the mystart char array delimited by end of line instead of , so we need to account for that
+        ++numOfColumns;
+        if(numOfLines == 1)
+        {
+            lineData.resize(numOfColumns);
+            headers.push_back(std::string(mystart));
+        }
+        else
+        {
+            lineData[numOfColumns - 1].push_back(std::string(mystart));
         }
     }
 }

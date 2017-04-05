@@ -6,6 +6,7 @@
 class QRegExp;
 class QLineEdit;
 class QStringList;
+class QStandardItemModel;
 
 class CustomProxyModel : public QSortFilterProxyModel
 {
@@ -13,6 +14,8 @@ class CustomProxyModel : public QSortFilterProxyModel
     public:
         explicit CustomProxyModel(QObject* parent=0);
         void setupFilters(QStringList& qHeaders);
+        std::vector<int> getFilteredIndexes(QStandardItemModel* inputModel);
+
         // Struct that will contain our line edit and regular expression
         struct filterInfo
         {

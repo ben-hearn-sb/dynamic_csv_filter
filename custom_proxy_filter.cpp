@@ -9,6 +9,7 @@
 #include<QObject>
 #include<QDebug>
 #include<QLineEdit>
+#include<QStandardItemModel>
 
 CustomProxyModel::CustomProxyModel(QObject* parent):QSortFilterProxyModel(parent)
 {
@@ -17,7 +18,7 @@ CustomProxyModel::CustomProxyModel(QObject* parent):QSortFilterProxyModel(parent
 bool CustomProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     bool contains;
-    for (int i = 0; i < filters.size(); ++i)
+    for (int i = 0; i < filters.size(); ++i) // filters.size() represents the number of columns we have. Columns = filters
     {
         QModelIndex qIndex  = sourceModel()->index(sourceRow, i, sourceParent);
         QString qStr        = sourceModel()->data(qIndex).toString();
@@ -64,3 +65,20 @@ void CustomProxyModel::setupFilters(QStringList& qHeaders)
         filters.push_back({edit, regExp});
     }
 }
+
+std::vector<int> CustomProxyModel::getFilteredIndexes(QStandardItemModel* inputModel)
+{
+    std::vector<int> visibleRows;
+    //int rowCount = CustomProxyModel::rowCount();
+    int rowCount = inputModel->rowCount();
+    for(int i = 0; i < rowCount; ++i)
+    {
+        bool valid = mapFromSource(sourceModel()->index(i, 0)).isValid();
+        if(valid == true)
+        {
+            visibleRows.push_back(i);
+        }
+    }
+    return visibleRows;
+}
+

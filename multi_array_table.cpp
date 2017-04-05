@@ -58,7 +58,11 @@ void Multi_Array_Table::setupActions()
 {
     actOpenFile = new QAction(QObject::tr("Open File"), this);
     actOpenFile->setShortcut(Qt::CTRL + Qt::Key_O);
+    actSaveFiltered = new QAction(QObject::tr("Save Filtered"), this);
+    actSaveFiltered->setShortcut(Qt::CTRL + Qt::Key_S);
+
     connect(actOpenFile, &QAction::triggered, this, &Multi_Array_Table::handleOpenCsvFile);
+    connect(actSaveFiltered, &QAction::triggered, this, &Multi_Array_Table::saveFilteredData);
 }
 
 void Multi_Array_Table::setupMenus()
@@ -66,6 +70,7 @@ void Multi_Array_Table::setupMenus()
     // Here we setup out menus
     fileMenu = new QMenu(QObject::tr("File"));
     fileMenu->addAction(actOpenFile);
+    fileMenu->addAction(actSaveFiltered);
     menuBar()->addMenu(fileMenu);
 }
 
@@ -153,7 +158,19 @@ void Multi_Array_Table::clearFilters()
     }
 }
 
-void Multi_Array_Table::saveFilteredSnapShot()
+void Multi_Array_Table::saveFilteredData()
 {
-    //TODO: Save the filtered table data
+    std::vector<int> filteredIndexes = filterModel->getFilteredIndexes(sourceModel);
+    QString headerLabels = qt_utils::getTableHeadersInStr(sourceModel);
+    QString tableData = qt_utils::collectTableInfoInStr(sourceModel, filteredIndexes);
+    QString finalData = headerLabels + "\n" + tableData;
+
+    QFile newFile("C:/Users/Ben/Desktop/sample_csv_data/test.csv");
+    if(newFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QTextStream out(&newFile);
+        out << finalData;
+        newFile.close();
+        qDebug() << "Closed file";
+    }
 }
