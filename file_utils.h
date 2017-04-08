@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <boost/filesystem.hpp>
+class QString;
 
 namespace file_utils
 {
@@ -16,6 +17,7 @@ namespace file_utils
     std::string getFileName(const std::string& inputPath);
     std::string getFileExt(const std::string& inputPath);
     std::string openFile();
+    void saveFile(QString& inData);
     std::istream& safeGetline(std::istream& is, std::string& t);
 }
 

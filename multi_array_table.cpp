@@ -167,14 +167,5 @@ void Multi_Array_Table::saveFilteredData()
     QString headerLabels = qt_utils::getTableHeadersInStr(sourceModel);
     QString tableData = qt_utils::collectTableInfoInStr(sourceModel, filteredIndexes);
     QString finalData = headerLabels + "\n" + tableData;
-
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("CSV data (*.csv)"));
-    QFile newFile( filename );
-    if(newFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-    {
-        QTextStream out(&newFile);
-        out << finalData;
-        newFile.close();
-        qDebug() << "Closed file";
-    }
+    file_utils::saveFile(finalData);
 }
