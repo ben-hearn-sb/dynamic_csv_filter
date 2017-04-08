@@ -2,12 +2,12 @@
 #define GENERAL_UTILS_H
 
 #include <vector>
-#include <algorithm>
 #include <iterator>
-#include <iostream>
-#include <string>
-#include <sstream>
+//#include <iostream>
+//#include <string>
+//#include <sstream>
 #include <algorithm>
+
 
 namespace general_utils
 {
