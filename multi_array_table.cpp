@@ -42,6 +42,8 @@ Multi_Array_Table::Multi_Array_Table(QWidget *parent): QMainWindow(parent)
     tableView->setModel(filterModel);
 
     btnResetFilters = new QPushButton("Clear Filters");
+    btnResetFilters->setFixedWidth(100);
+    btnResetFilters->setStyleSheet("font-weight: bold;");
     //btnResetFilters->setShortcut(Qt::CTRL + Qt::Key_C);
     connect(btnResetFilters, SIGNAL(clicked()), this, SLOT(clearFilters()));
 
@@ -166,13 +168,8 @@ void Multi_Array_Table::saveFilteredData()
     QString tableData = qt_utils::collectTableInfoInStr(sourceModel, filteredIndexes);
     QString finalData = headerLabels + "\n" + tableData;
 
-    //QFile newFile("C:/Users/Ben/Desktop/sample_csv_data/test.csv");
-    //filename = QFileDialog::getSaveFileName( ... );
     QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("CSV data (*.csv)"));
     QFile newFile( filename );
-    //f.open( QIODevice::WriteOnly );
-    // store data in f
-    //f.close();
     if(newFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         QTextStream out(&newFile);
