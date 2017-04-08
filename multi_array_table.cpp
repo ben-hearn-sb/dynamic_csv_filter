@@ -12,6 +12,7 @@
 #include<QObject>
 #include<QDebug>
 #include<QPushButton>
+#include<QFileDialog>
 
 #include "multi_array_table.h"
 #include "custom_proxy_filter.h"
@@ -165,7 +166,13 @@ void Multi_Array_Table::saveFilteredData()
     QString tableData = qt_utils::collectTableInfoInStr(sourceModel, filteredIndexes);
     QString finalData = headerLabels + "\n" + tableData;
 
-    QFile newFile("C:/Users/Ben/Desktop/sample_csv_data/test.csv");
+    //QFile newFile("C:/Users/Ben/Desktop/sample_csv_data/test.csv");
+    //filename = QFileDialog::getSaveFileName( ... );
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("CSV data (*.csv)"));
+    QFile newFile( filename );
+    //f.open( QIODevice::WriteOnly );
+    // store data in f
+    //f.close();
     if(newFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         QTextStream out(&newFile);

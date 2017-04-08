@@ -22,6 +22,7 @@ namespace qt_utils
     QString collectTableInfoInStr(QStandardItemModel* inputModel);
     QString collectTableInfoInStr(QStandardItemModel* inputModel, std::vector<int>& filteredIndexes);
     QString getTableHeadersInStr(QStandardItemModel* inputModel);
+    QString convertFromStdString(const std::string& inString);
 }
 
 #endif

@@ -124,3 +124,8 @@ QString qt_utils::getTableHeadersInStr(QStandardItemModel* inputModel)
     }
     return headerLabels;
 }
+
+QString qt_utils::convertFromStdString(const std::string& inString)
+{
+    return QString::fromStdString(inString);
+}

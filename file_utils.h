@@ -1,11 +1,12 @@
 #ifndef FILE_UTILS_H
 #define FILE_UTILS_H
 
-#include <fstream>
+//#include <fstream>
+//#include <regex>
+//#include <iostream>
+#include <istream>
 #include <string>
 #include <vector>
-#include <regex>
-#include <iostream>
 #include <boost/filesystem.hpp>
 
 namespace file_utils
@@ -15,6 +16,7 @@ namespace file_utils
     std::string getFileName(const std::string& inputPath);
     std::string getFileExt(const std::string& inputPath);
     std::string openFile();
+    std::istream& safeGetline(std::istream& is, std::string& t);
 }
 
 #endif // FILE_UTILS_H

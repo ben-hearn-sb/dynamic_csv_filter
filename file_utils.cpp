@@ -11,21 +11,21 @@
 #include <QDebug>
 #include <QString>
 
-#include <sstream>
+#include <istream>
 #include <windows.h>
 namespace fs = boost::filesystem;
 
 void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::vector<std::string>>& lineData, std::vector<std::string>& headers)
 {
     // Constructs a multi-vector out of a csv file
-    std::ifstream file(filePath); // declare file stream
+   // std::ifstream file(filePath); // declare file stream
+    std::ifstream file(filePath.c_str()); // declare file stream
     std::string line;
     int numOfColumns = 0;
     int numOfLines= 0;
 
-    // Run through each line of the CSV file and split at the newline separator
-    // TODO: Fix this to handle bth \r and \n newline terminators
-    while (std::getline(file, line, '\r'))
+    // Using safeGetLine function to handle LF, CR, and CRLF
+    while(!safeGetline(file, line).eof())
     {
         numOfColumns = 0;
         ++numOfLines;
@@ -124,5 +124,40 @@ std::string file_utils::openFile()
             return "";
         }
         return fileName.toStdString();
+    }
+}
+
+std::istream& file_utils::safeGetline(std::istream& is, std::string& t)
+{
+    t.clear();
+
+    // The characters in the stream are read one-by-one using a std::streambuf.
+    // That is faster than reading them one-by-one using the std::istream.
+    // Code that uses streambuf this way must be guarded by a sentry object.
+    // The sentry object performs various tasks,
+    // such as thread synchronization and updating the stream state.
+
+    std::istream::sentry se(is, true);
+    std::streambuf* sb = is.rdbuf();
+
+    for(;;) // ;; Is the same as while(true)
+    {
+        int c = sb->sbumpc();
+        switch (c)
+        {
+            case '\n':
+                return is;
+            case '\r':
+                if(sb->sgetc() == '\n')
+                    sb->sbumpc();
+                return is;
+            case EOF:
+                // Also handle the case when the last line has no line ending
+                if(t.empty())
+                    is.setstate(std::ios::eofbit);
+                return is;
+            default:
+                t += (char)c;
+        }
     }
 }
