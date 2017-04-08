@@ -127,6 +127,23 @@ std::string file_utils::openFile()
     }
 }
 
+void file_utils::saveFile(QString& inData)
+{
+    QString fileName = QFileDialog::getSaveFileName(NULL, QObject::tr("Save File"), "", QObject::tr("CSV data (*.csv)"));
+    QFile newFile( fileName );
+    if (fileName.isEmpty())
+    {
+        return;
+    }
+    else if(newFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QTextStream out(&newFile);
+        out << inData;
+        newFile.close();
+        qDebug() << "Closed and saved file";
+    }
+}
+
 std::istream& file_utils::safeGetline(std::istream& is, std::string& t)
 {
     t.clear();
