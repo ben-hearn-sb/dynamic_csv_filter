@@ -34,6 +34,3 @@ HEADERS += \
     general_utils.h \
     qt_utils.h \
     multi_array_table.h
-
-INCLUDEPATH += C:/boost_1_63_0/
-LIBS += "-LC:/boost_1_63_0/stage/lib/"

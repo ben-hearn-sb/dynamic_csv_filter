@@ -12,8 +12,8 @@
 #include <QString>
 
 #include <istream>
+#include <fstream>
 #include <windows.h>
-namespace fs = boost::filesystem;
 
 void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::vector<std::string>>& lineData, std::vector<std::string>& headers)
 {
@@ -67,40 +67,6 @@ void file_utils::constructCsvFileVector(std::string filePath, std::vector<std::v
             lineData[numOfColumns - 1].push_back(std::string(mystart));
         }
     }
-}
-
-// List files in a single layered directory
-std::vector<std::string> file_utils::listFilesInDir(std::string & inputPath)
-{
-    // Iterates a directory and lists all the files. Not currelty recursive
-    std::vector<std::string> file_paths = std::vector<std::string>();
-
-    if (!inputPath.empty())
-    {
-        fs::path apk_path(inputPath);
-        fs::recursive_directory_iterator end;
-
-        for (fs::recursive_directory_iterator i(apk_path); i != end; ++i)
-        {
-            const fs::path cp = (*i);
-            file_paths.push_back(cp.string());
-        }
-    }
-    return file_paths;
-}
-
-std::string file_utils::getFileName(const std::string& inputPath)
-{
-    // Gets the name of a file
-    fs::path p(inputPath);
-    return p.stem().string();
-}
-
-std::string file_utils::getFileExt(const std::string & inputPath)
-{
-    // gets the extension of a file
-    fs::path p(inputPath);
-    return p.filename().extension().string();
 }
 
 std::string file_utils::openFile()
