@@ -11,7 +11,6 @@
 
 namespace general_utils
 {
-    std::vector<std::string> extractHeaders(std::vector<std::vector<std::string>>& inputVec);
     std::vector<const char*> convertToConstCharVec(std::vector<std::string>& vs);
     const char* convertToCharStar(const std::string & s);
 

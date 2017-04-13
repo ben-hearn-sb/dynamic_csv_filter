@@ -17,21 +17,18 @@ CustomProxyModel::CustomProxyModel(QObject* parent):QSortFilterProxyModel(parent
 
 bool CustomProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    bool contains;
+    // Iterates each row and if the row does not contain the regExp then we return false. Default is true
+    // Each row is iterates, if our QRegExp is not found in a column then the row is false
     for (int i = 0; i < filters.size(); ++i) // filters.size() represents the number of columns we have. Columns = filters
     {
         QModelIndex qIndex  = sourceModel()->index(sourceRow, i, sourceParent);
         QString qStr        = sourceModel()->data(qIndex).toString();
-        if(i == 0)
+        if (qStr.contains(filters[i].myRegExp) == false)
         {
-            contains = qStr.contains(filters[i].myRegExp);
-        }
-        else
-        {
-            contains &= qStr.contains(filters[i].myRegExp);
+            return false;
         }
     }
-    return contains;
+    return true;
 }
 
 void CustomProxyModel::setFilter(const QString& regExp)
